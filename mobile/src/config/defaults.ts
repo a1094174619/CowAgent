@@ -18,4 +18,8 @@ export const DEFAULT_SERVER_NAME = '';
 export const HTTP_TIMEOUT_MS = 15_000;
 
 /** Coalesce streamed deltas before re-rendering the message list. */
-export const STREAM_FLUSH_INTERVAL_MS = 80;
+/**
+ * How often streamed text reaches the store. Each flush re-parses the growing reply as Markdown,
+ * so this trades a little liveness for frames: 120 ms is still ~8 updates a second.
+ */
+export const STREAM_FLUSH_INTERVAL_MS = 120;

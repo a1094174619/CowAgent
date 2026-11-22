@@ -75,10 +75,11 @@ export function RootNavigator() {
     <Stack.Navigator
       // Switching servers rebuilds the stack, so no page keeps showing the previous server's data.
       key={authed ? `server:${activeId}` : 'login'}
-      // On Android's new architecture a push can detach the page underneath while the new one is still
-      // sliding over it, so the old page vanishes halfway. Pages below stay attached instead; on the web
-      // the screens package drops each page's layout when detaching is off, so it keeps the default there.
-      detachInactiveScreens={Platform.OS === 'web'}
+      // Pages below the top one are detached once the slide finishes, which is what lets
+      // `freezeOnBlur` stop them from rebuilding while covered - a streaming chat two pages down
+      // otherwise re-renders on every flush. (`enableFreeze(true)` in index.js turns freezing on.)
+      // Watch for a page vanishing halfway through a push: an older react-native-screens detached
+      // it a frame too early on the new architecture.
       screenOptions={{
         headerShown: false,
         // A browser page the stack fills would otherwise scroll as a whole,
@@ -86,6 +87,7 @@ export function RootNavigator() {
         headerMode: Platform.OS === 'web' ? 'float' : undefined,
         cardStyle: {backgroundColor: t.bg0},
         animation: 'slide_from_right',
+        freezeOnBlur: true,
         cardStyleInterpolator: forSlide,
         cardOverlayEnabled: false,
         // Swipe right anywhere on a page to go back, with the previous page following the finger.

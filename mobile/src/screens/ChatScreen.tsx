@@ -859,7 +859,15 @@ export function ChatScreen({route, navigation}: Props) {
                     keyboardDismissMode="interactive"
                     maintainVisibleContentPosition={KEEP_POSITION}
                     onScroll={onListScroll}
-                    scrollEventThrottle={32}
+                    // A bubble carries a full Markdown tree, so the default window of 21 screens
+                    // keeps far more of them alive than a scroll can use, and a scroll reports
+                    // its offset ~31 times a second across the bridge.
+                    windowSize={7}
+                    maxToRenderPerBatch={6}
+                    initialNumToRender={8}
+                    updateCellsBatchingPeriod={50}
+                    removeClippedSubviews
+                    scrollEventThrottle={100}
                   />
                   {away && (
                     <Animated.View entering={FadeIn.duration(160)} exiting={FadeOut.duration(120)} style={styles.toBottom}>
